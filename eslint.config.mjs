@@ -9,14 +9,16 @@ import { FlatCompat } from "@eslint/eslintrc";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-export default [{
+const eslintConfig = [
+  {
     ignores: ["**/node_modules", "**/.eslintrc.js"],
-}, ...compat.extends(
+  },
+  ...compat.extends(
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
@@ -24,43 +26,44 @@ export default [{
     "plugin:prettier/recommended",
     "next",
     "next/core-web-vitals",
-), {
+  ),
+  {
     plugins: {
-        "@typescript-eslint": typescriptEslint,
+      "@typescript-eslint": typescriptEslint,
     },
 
     languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.amd,
-            ...globals.node,
-        },
+      globals: {
+        ...globals.browser,
+        ...globals.amd,
+        ...globals.node,
+      },
 
-        parser: tsParser,
-        ecmaVersion: 5,
-        sourceType: "commonjs",
-
-        parserOptions: {
-            project: true,
-            tsconfigRootDir: "/Users/tidvn/Project/nextjs/next-15-base",
-        },
+      parser: tsParser,
+      ecmaVersion: 5,
+      sourceType: "commonjs",
     },
 
     rules: {
-        "prettier/prettier": "error",
-        "react/react-in-jsx-scope": "off",
+      "prettier/prettier": "error",
+      "react/react-in-jsx-scope": "off",
+      "jsx-a11y/anchor-is-valid": [
+        "error",
+        {
+          components: ["Link"],
+          specialLink: ["hrefLeft", "hrefRight"],
+          aspects: ["invalidHref", "preferButton"],
+        },
+      ],
 
-        "jsx-a11y/anchor-is-valid": ["error", {
-            components: ["Link"],
-            specialLink: ["hrefLeft", "hrefRight"],
-            aspects: ["invalidHref", "preferButton"],
-        }],
-
-        "react/prop-types": 0,
-        "@typescript-eslint/no-unused-vars": 1,
-        "react/no-unescaped-entities": 0,
-        "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/no-var-requires": "off",
-        "@typescript-eslint/ban-ts-comment": "off",
+      "react/prop-types": 0,
+      "@typescript-eslint/no-unused-vars": 1,
+      "react/no-unescaped-entities": 0,
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
     },
-}];
+  },
+];
+
+export default eslintConfig;
