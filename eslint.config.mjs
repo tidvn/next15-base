@@ -1,8 +1,5 @@
-import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
-import prettier from "eslint-plugin-prettier";
+import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,77 +9,61 @@ import { FlatCompat } from "@eslint/eslintrc";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-export default [...fixupConfigRules(compat.extends(
+const eslintConfig = [
+  {
+    ignores: ["**/node_modules", "**/.eslintrc.js"],
+  },
+  ...compat.extends(
     "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
     "plugin:prettier/recommended",
-    "plugin:react/jsx-runtime",
-    "plugin:@next/next/recommended",
-    "prettier",
-)), {
+    "next",
+    "next/core-web-vitals",
+  ),
+  {
     plugins: {
-        "@typescript-eslint": fixupPluginRules(typescriptEslint),
-        react: fixupPluginRules(react),
-        "react-hooks": fixupPluginRules(reactHooks),
-        prettier: fixupPluginRules(prettier),
+      "@typescript-eslint": typescriptEslint,
     },
 
     languageOptions: {
-        parser: tsParser,
-        ecmaVersion: 2023,
-        sourceType: "module",
+      globals: {
+        ...globals.browser,
+        ...globals.amd,
+        ...globals.node,
+      },
 
-        parserOptions: {
-            ecmaFeatures: {
-                jsx: true,
-            },
-        },
-    },
-
-    settings: {
-        react: {
-            version: "detect",
-        },
+      parser: tsParser,
+      ecmaVersion: 5,
+      sourceType: "commonjs",
     },
 
     rules: {
-        "@typescript-eslint/no-explicit-any": "error",
-        "@typescript-eslint/no-empty-object-type": "off",
-        "react/prop-types": "off",
-        "react/react-in-jsx-scope": "off",
+      "prettier/prettier": "error",
+      "react/react-in-jsx-scope": "off",
+      "jsx-a11y/anchor-is-valid": [
+        "error",
+        {
+          components: ["Link"],
+          specialLink: ["hrefLeft", "hrefRight"],
+          aspects: ["invalidHref", "preferButton"],
+        },
+      ],
 
-        "@typescript-eslint/no-unused-vars": ["warn", {
-            argsIgnorePattern: "^_",
-        }],
-
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
-
-        "prettier/prettier": ["warn", {
-            printWidth: 100,
-            tabWidth: 4,
-            singleQuote: true,
-            trailingComma: "all",
-            bracketSpacing: true,
-            semi: true,
-            useTabs: false,
-            bracketSameLine: false,
-            jsxSingleQuote: false,
-            arrowParens: "always",
-            embeddedLanguageFormatting: "auto",
-            htmlWhitespaceSensitivity: "css",
-            insertPragma: false,
-            proseWrap: "preserve",
-            quoteProps: "as-needed",
-            requirePragma: false,
-            plugins: ["prettier-plugin-tailwindcss"],
-        }],
+      "react/prop-types": 0,
+      "@typescript-eslint/no-unused-vars": 1,
+      "react/no-unescaped-entities": 0,
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
     },
-}];
+  },
+];
+
+export default eslintConfig;
