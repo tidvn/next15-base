@@ -1,0 +1,7 @@
+src/components/ui/**
+.next
+.vercel
+.tubro
+out/
+dis/
+build/
